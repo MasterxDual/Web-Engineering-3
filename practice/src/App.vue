@@ -1,11 +1,23 @@
-<script setup lang="ts"></script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <h1>Tienda FastClient</h1>
+  <RegisterClient />
 </template>
 
-<style scoped></style>
+<script setup lang="ts">
+  import RegisterClient from "./components/RegisterClient.vue";
+</script>
+
+<style scoped>
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 280px) {
+    h1 {
+      font-size: 0.8rem;
+    }
+  }
+</style>
