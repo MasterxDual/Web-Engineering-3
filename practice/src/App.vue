@@ -1,11 +1,11 @@
 
 <template>
   <h1>Tienda FastClient</h1>
-  <RegisterClient />
+  <router-view />
 </template>
 
 <script setup lang="ts">
-  import RegisterClient from "./components/RegisterClient.vue";
+  
 </script>
 
 <style scoped>

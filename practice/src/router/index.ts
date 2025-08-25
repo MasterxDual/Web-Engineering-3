@@ -1,8 +1,17 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
+import RegisterClient from '@/components/RegisterClient.vue';
+import ProductListSearch from '@/components/ProductListSearch.vue';
+
+
+// We define some routes for the application to access different components.
+const routes = [
+  { path: '/register', component: RegisterClient },
+  { path: '/products', component: ProductListSearch }
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [],
+  routes,
 })
 
 export default router
