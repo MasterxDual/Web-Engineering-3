@@ -33,35 +33,28 @@
     import { ref, computed } from 'vue';
     const searchQuery = ref('');
 
-    // Local list of products
-    const products = ref([
-        { id: 1, name: 'Potatoes', price: 1.5, stock: 1 },
-        { id: 2, name: 'Tomatoes', price: 2.0, stock: 15 },
-        { id: 3, name: 'Carrots', price: 1.0, stock: 25 },
-        { id: 4, name: 'Lettuce', price: 1.2, stock: 0 },
-        { id: 5, name: 'Cucumbers', price: 1.8, stock: 8 },
-        { id: 6, name: 'Onions', price: 1.3, stock: 30 },
-        { id: 7, name: 'Garlic', price: 0.5, stock: 50 },
-        { id: 8, name: 'Bell Peppers', price: 2.5, stock: 12 },
-        { id: 9, name: 'Broccoli', price: 2.2, stock: 5 },
-        { id: 10, name: 'Spinach', price: 1.7, stock: 20 },
-    ])
+    // We define the emit event to notify parent component when a product is added to cart
+    const emit = defineEmits<{
+        (e: 'add-to-cart', productId: number): void
+    }>();
+
+    const productProps = defineProps<{
+        products: { id: number; name: string; price: number; stock: number }[];
+    }>();
 
     // Computed property to filter products based on search query (case-insensitive)
     // Computed works with reactive variables and updates automatically when they change
     const filteredProducts = computed(() => 
-        products.value.filter((p) => p.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+        productProps.products.filter((p) => p.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
     );
 
+    /** Function that emits the event to parent component when a product is added to cart
+     * 
+     *  */ 
     function addToCart(productId: number) {
-        const product = products.value.find(p => p.id === productId);
-        if (product && product.stock > 0) {
-            product.stock--;
-            alert(`Added ${product.name} to cart!`);
-        } else {
-            alert('Product is out of stock!');
-        }
+        emit('add-to-cart', productId);
     }
+    
 </script>
 
 <style scoped>
