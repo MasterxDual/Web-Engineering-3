@@ -1,22 +1,29 @@
-
 <template>
-  <h1>Tienda FastClient</h1>
+  <div class="app-container">
+    <h1>FastClient Store</h1>
   
-  <!-- Product List -->
-  <ProductListSearch @add-to-cart="handleAddToCart" :products="products"/>
-
-  <!-- Shopping Cart -->
-  <ShoppingCart ref="cartRef" @update-stock="handleUpdateStock" :products="products" />
-
+    <!-- Navigation menu -->
+    <nav class="nav-menu">
+      <RouterLink to="/" class="nav-link">Home</RouterLink>
+      <RouterLink to="/products" class="nav-link">Products</RouterLink>
+      <RouterLink to="/clients" class="nav-link">Clients</RouterLink>
+      <RouterLink to="/cart" class="nav-link">Cart</RouterLink>
+    </nav>
+    
+    <hr />
+  
+    <!-- Here views are loaded -->
+    <RouterView />
+  </div>
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import ProductListSearch from './components/ProductListSearch.vue';
-  import ShoppingCart from './components/ShoppingCart.vue';
+  import { ref, provide } from 'vue';
+  import type { Ref } from 'vue';
+  import type { Product } from './types/Product';
 
   /* Global product list to share with both components */
-  const products = ref([
+  const products = ref<Product[]>([
     { id: 1, name: 'Potatoes', price: 1.5, stock: 1 },
     { id: 2, name: 'Tomatoes', price: 2.0, stock: 15 },
     { id: 3, name: 'Carrots', price: 1.0, stock: 25 },
@@ -29,42 +36,53 @@
     { id: 10, name: 'Spinach', price: 1.7, stock: 20 },
   ]);
 
-  // Reference to the ShoppingCart component to call its methods
-  const cartRef = ref<InstanceType<typeof ShoppingCart> | null>(null);
+  // Global cart to share with other components
+  const cart = ref<{ id: number; quantity: number }[]>([]);
+  
+  // Share products globally
+  provide<Ref<Product[]>>('products', products);
 
-  /** Function to handle the event when a product is added to cart
-   * Calls the addItem method of the ShoppingCart component via ref
-   * Also decreases the stock of the product in the products list
-   * @param productId - ID of the product to add to cart
-   */
-  function handleAddToCart(productId: number) {
-    // Call the addItem method in ShoppingCart component (the son component of this App.vue)
-    cartRef.value?.addItem(productId);
-
-    // We also decrease the stock in the products list
-    const product = products.value.find(p => p.id === productId);
-
-    if(product && product.stock > 0) {
-      product.stock--;
-    } else {
-      alert('Product is out of stock!');
-    }
-  }
-
-  /** Function to handle the event when stock needs to be updated
-   * This is called from the ShoppingCart component when items are increased or decreased
-   * @param payload - Object containing productId and the difference in stock (positive or negative)
-   *  */
-  function handleUpdateStock(payload: { productId: number; diff: number }) {
-    const product = products.value.find(p => p.id === payload.productId);
-    if(product) {
-      product.stock += payload.diff;
-    }
-  }
+  // Share cart globally
+  provide<Ref<{ id: number; quantity: number }[]>>('cart', cart);
   
 </script>
 
 <style scoped>
+  .app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .nav-menu {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .nav-link:hover {
+    background-color: #007bff;
+    color: white;
+  }
+
+  hr {
+    margin: 1.5rem 0;
+    border: 0;
+    border-top: 1px solid #ccc;
+  }
+
   h1 {
     text-align: center;
     color: #333;

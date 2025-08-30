@@ -25,24 +25,16 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, computed } from 'vue';
+    import { computed, inject } from 'vue';
+    import type { Product } from '@/types/Product';
+    import type { Ref } from 'vue';
 
+    // Inject products from parent component (App.vue) instead of using props
+    // const products = inject<Ref<Product[]>>('products')!;
+    const products = inject("products") as Ref<Product[]>;
 
-    // Interface to define the structure of a product
-    interface Product {
-        id: number; 
-        name: string;
-        price: number;
-        stock: number;
-    }
-
-    // Props is necessary to receive the products list from parent component (App.vue)
-    const props = defineProps<{
-        products: Product[];
-    }>();
-
-    // Reactive variable to store the cart items
-    const cart = ref<{ id: number; quantity: number }[]>([]);
+    // We receive the global cart to update it when a product is added
+    const cart = inject<Ref<{ id: number; quantity: number }[]>>('cart')!;
 
     // Emit event to update stock when item is added or removed from cart
     // This is sent to the parent component (App.vue) to update the stock in the global products list
@@ -57,7 +49,7 @@
      *  */ 
     const cartItems = computed(() =>
       cart.value.map(entry => {
-        const product = props.products.find(p => p.id === entry.id)!;
+        const product = products.value.find(p => p.id === entry.id)!;
         return {
           ...product,
           quantity: entry.quantity,
@@ -92,14 +84,15 @@
      *  */ 
     function increase(productId: number) {
       const cartItem = cart.value.find(i => i.id === productId);
-      const product = props.products.find(p => p.id === productId);
+      const product = products.value.find(p => p.id === productId);
 
       if (cartItem && product && product.stock > 0) {
         cartItem.quantity++;
         emit('update-stock', { productId, diff: -1 });
+      } else if (product && product.stock <= 0) {
+          alert("There's no more stock available for this product.")
       }
     }
-
 
     /**
      * Function to decrease one unit of a product in the cart clicking the '-' button
@@ -108,7 +101,7 @@
      *  */
     function decrease(productId: number) {
       const cartItem = cart.value.find(i => i.id === productId);
-      const product = props.products.find(p => p.id === productId);
+      const product = products.value.find(p => p.id === productId);
 
       if (cartItem && product) {
         cartItem.quantity--;
@@ -117,7 +110,7 @@
         if (cartItem.quantity <= 0) {
           cart.value = cart.value.filter(i => i.id !== productId);
         }
-      }
+      } 
     }
 
     // Allows the parent component to access and use the addItem function

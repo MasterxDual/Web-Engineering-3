@@ -16,11 +16,12 @@
                 :key="product.id"
                 class="product-card"
                 :class="{ 'out-of-stock': product.stock === 0 }">
-                <h3>{{ product.name }}</h3>
+                <!-- This allows to navigate to the product detail page when clicked on the name of the product shown in the product list -->
+                <h3><RouterLink :to="`/products/${product.id}`" class="product-name">{{ product.name }}</RouterLink></h3>
                 <p>Price: ${{ product.price }}</p>
                 <p>
                     Stock:
-                    <span v-if="product.stock > 0">In Stock: {{ product.stock }}</span>
+                    <span v-if="product.stock > 0">{{ product.stock }}</span>
                     <span class="out-of-stock-span" v-else>Out of Stock</span>
                 </p>
                 <button :disabled="product.stock === 0" @click="addToCart(product.id)">Add to cart</button>
@@ -96,9 +97,17 @@
         transition: transform 0.2s;
         flex: 1 1 180px; /* Flex-grow, flex-shrink, flex-basis */
     }
+
     .product-card:hover {
         transform: scale(1.02);
     }
+
+    .product-name {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: 900;
+    }
+
     button {
         margin-top: 0.5rem;
         padding: 0.6rem 1 rem;

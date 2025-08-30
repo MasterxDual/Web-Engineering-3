@@ -5,8 +5,18 @@ la variable sin el value y también en el archivo script usando el value -->
     <div class="container">
         <div class="form-wrapper">
             <label for="name">Complete name:</label>
-            <input id="name" type="text" v-model="completeName" placeholder="Enter your complete name"/>
-            <button @click="sayHello">Say Hi</button>
+            <input 
+                id="name"
+                type="text"
+                v-model="completeName"
+                placeholder="Enter your complete name"
+                :class="{
+                    'error-validation': completeName.length < 3 && completeName.length > 0,
+                    'success-validation': completeName.length >= 3
+                }"
+            />    
+            <button :disabled="completeName.length < 3" @click="sayHello">Register</button>
+            <p v-if="completeName.length < 3 && completeName.length > 0" style="color: red;">Please enter at least 3 characters</p>
         </div>
     </div>
 </template>
@@ -17,12 +27,8 @@ la variable sin el value y también en el archivo script usando el value -->
     const completeName = ref('');
 
     function sayHello() {
-        if(completeName.value) {
-            alert("Welcome to our website");
-            console.log("Se ha guardado el nombre completo del cliente: " + completeName.value + " en la base de datos.");
-        } else {
-            alert("Please enter your complete name");
-        }
+        alert("Welcome to our website " + completeName.value);
+        console.log("Se ha guardado el nombre completo del cliente: " + completeName.value + " en la base de datos.");
     }
 </script>
 
@@ -86,6 +92,14 @@ la variable sin el value y también en el archivo script usando el value -->
 
     button:hover {
         background-color: #0056b3;
+    }
+
+    .error-validation {
+        border: 2px solid red;
+    }
+
+    .success-validation {
+        border: 2px solid green !important; /* We use !important to override the focus style */
     }
 
     @media (max-width: 480px) {
