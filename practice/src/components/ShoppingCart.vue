@@ -4,7 +4,7 @@
     <v-card-title>Shopping Cart</v-card-title>
     <v-card-text>
       <div v-if="cartItems.length === 0">
-        <v-alert type="info" text>Your cart is empty.</v-alert>
+        <v-alert type="info" variant="text">Your cart is empty.</v-alert>
       </div>
       <v-list v-else>
         <!-- Iterates through cart items -->
