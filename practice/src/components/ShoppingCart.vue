@@ -1,27 +1,50 @@
 <template>
-    <div class="cart">
-        <p v-if="cartItems.length === 0" class="empty-cart">Your cart is empty.</p>
-
-        <!-- Cart list (it's an unordened list) -->
-        <ul v-else class="cart-list">
-            <li v-for="item in cartItems" :key="item.id" class="cart-item">
-                <!-- Cart item information -->
-                <div class="item-info">
-                    <span class="item-name">{{ item.name }} (x{{ item.quantity }})</span>
-                    <span class="item-price"> ${{ item.subtotal.toFixed(2) }}</span>
-                </div>
-                <!-- Controls to increase or decrease the quantity of stock -->
-                <div class="controls">
-                    <button @click="decrease(item.id)">-</button>
-                    <button @click="increase(item.id)">+</button>
-                </div>
-            </li>
-        </ul>
-
-        <h3 v-if="cartItems.length > 0" class="cart-total">
-            Total: ${{ totalPrice.toFixed(2) }}
-        </h3>
-    </div>
+    <!-- Card container -->
+  <v-card>
+    <v-card-title>Shopping Cart</v-card-title>
+    <v-card-text>
+      <div v-if="cartItems.length === 0">
+        <v-alert type="info" text>Your cart is empty.</v-alert>
+      </div>
+      <v-list v-else>
+        <!-- Iterates through cart items -->
+        <v-list-item
+          v-for="item in cartItems"
+          :key="item.id"
+        >
+          <!-- Content to the left
+          Avatar with the first letter of the item name -->
+          <template #prepend>
+            <v-avatar color="primary">
+              {{ item.name.charAt(0) }}
+            </v-avatar>
+          </template>
+          <v-list-item-title>
+            {{ item.name }} (x{{ item.quantity }})
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            <!-- Formatted with two decimals -->
+            ${{ item.subtotal.toFixed(2) }}
+          </v-list-item-subtitle>
+          <!-- Content to the right -->
+          <template #append>
+            <v-btn icon @click="decrease(item.id)">
+              <!-- Icon of minus -->
+              <v-icon>mdi-minus</v-icon>
+            </v-btn>
+            <v-btn icon @click="increase(item.id)">
+              <!-- Icon of plus -->
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+          </template>
+        </v-list-item>
+      </v-list>
+      <!-- Total of the cart -->
+      <div v-if="cartItems.length > 0" class="text-right mt-4">
+        <strong>Total: ${{ totalPrice.toFixed(2) }}</strong>
+      </div>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup lang="ts">
@@ -119,104 +142,4 @@
 </script>
 
 <style scoped>
-
-    .cart {
-        background: #fdfdfd;
-        padding: 1rem;
-        border-radius: 8px;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
-        margin: auto;
-        flex: 1;
-    }
-
-    .empty-cart {
-        color: #888;
-        text-align: center;
-        font-style: italic;
-    }
-
-    .cart-list {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .cart-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #fafafa;
-        padding: 0.6rem;
-        margin-bottom: 0.6rem;
-        border-radius: 8px;
-        flex-wrap: wrap;
-    }
-
-    .item-info {
-        display: flex;
-        flex-direction: column;
-        font-size: 0.95rem;
-    }
-
-    .item-name {
-        font-weight: 600;
-        color: #333;
-    }
-
-    .item-price {
-        color: #007bff;
-    }
-
-    .controls {
-        display: flex;
-        gap: 0.4rem;
-        margin-top: 0.4rem;
-    }
-
-    .controls button {
-        padding: 0.4rem 0.8rem;
-        border: none;
-        border-radius: 6px;
-        background: #007bff;
-        color: white;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: background 0.2s;
-    }
-
-    .controls button:hover {
-        background: #0056b3;
-    }
-
-    .cart-total {
-        margin-top: 1rem;
-        text-align: right;
-        color: #222;
-        font-weight: bold;
-    }
-
-    @media (max-width: 480px) {
-        .cart {
-            max-width: 100%;
-            padding: 0.8rem;
-        }
-
-        .cart-item {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .controls {
-            margin-top: 0.5rem;
-            width: 100%;
-            justify-content: flex-end;
-        }
-
-        .controls button {
-            flex: 1; /* Buttons grow in mobile */
-        }
-
-    }
-
 </style>

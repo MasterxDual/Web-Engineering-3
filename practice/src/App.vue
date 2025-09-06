@@ -1,20 +1,29 @@
 <template>
-  <div class="app-container">
-    <h1>FastClient Store</h1>
-  
-    <!-- Navigation menu -->
-    <nav class="nav-menu">
-      <RouterLink to="/" class="nav-link">Home</RouterLink>
-      <RouterLink to="/products" class="nav-link">Products</RouterLink>
-      <RouterLink to="/clients" class="nav-link">Clients</RouterLink>
-      <RouterLink to="/cart" class="nav-link">Cart</RouterLink>
-    </nav>
-    
-    <hr />
-  
-    <!-- Here views are loaded -->
-    <RouterView />
-  </div>
+  <!-- Principal container -->
+  <v-app>
+    <!-- Superior navigation bar -->
+    <v-app-bar app color="primary" dark>
+      <!-- Title -->
+      <v-toolbar-title>FastClient Store</v-toolbar-title>
+      <!-- Flexible space to push elements to the right -->
+      <v-spacer />
+      <!-- Tab navigation -->
+      <v-tabs v-model="tab" background-color="primary" dark>
+        <v-tab to="/">Home</v-tab>
+        <v-tab to="/products">Products</v-tab>
+        <v-tab to="/clients">Clients</v-tab>
+        <v-tab to="/cart">Cart</v-tab>
+      </v-tabs>
+    </v-app-bar>
+    <!-- Principal area of content -->
+    <v-main>
+      <!-- Margin container -->
+      <v-container>
+        <!-- Renders different views from vue-router -->
+        <router-view />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup lang="ts">
@@ -22,7 +31,13 @@
   import type { Ref } from 'vue';
   import type { Product } from './types/Product';
 
-  /* Global product list to share with both components */
+  /* The tab variable is a reactive reference that:
+    Controls the active tab in navigation (v-tabs)
+    Automatically syncs with the user's selection thanks to v-model="tab"
+    Allows programmatically changing the active tab
+    Works with Vue-Router thanks to the to attribute on each v-tab */
+  const tab = ref(null);
+
   const products = ref<Product[]>([
     { id: 1, name: 'Potatoes', price: 1.5, stock: 1 },
     { id: 2, name: 'Tomatoes', price: 2.0, stock: 15 },
@@ -36,62 +51,12 @@
     { id: 10, name: 'Spinach', price: 1.7, stock: 20 },
   ]);
 
-  // Global cart to share with other components
   const cart = ref<{ id: number; quantity: number }[]>([]);
-  
-  // Share products globally
-  provide<Ref<Product[]>>('products', products);
 
-  // Share cart globally
+  provide<Ref<Product[]>>('products', products);
   provide<Ref<{ id: number; quantity: number }[]>>('cart', cart);
-  
 </script>
 
 <style scoped>
-  .app-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
-    text-align: center;
-  }
-
-  .nav-menu {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .nav-link {
-    text-decoration: none;
-    color: #007bff;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.3s, color 0.3s;
-  }
-
-  .nav-link:hover {
-    background-color: #007bff;
-    color: white;
-  }
-
-  hr {
-    margin: 1.5rem 0;
-    border: 0;
-    border-top: 1px solid #ccc;
-  }
-
-  h1 {
-    text-align: center;
-    color: #333;
-    margin-top: 20px;
-  }
-
-  @media (max-width: 280px) {
-    h1 {
-      font-size: 0.8rem;
-    }
-  }
+  
 </style>

@@ -1,24 +1,36 @@
 <!-- Al utilizar v-model: sincroniza el valor actual reactivo directamente en el input ingresando 
 la variable sin el value y también en el archivo script usando el value -->
 
+
 <template>
-    <div class="container">
-        <div class="form-wrapper">
-            <label for="name">Complete name:</label>
-            <input 
-                id="name"
-                type="text"
-                v-model="completeName"
-                placeholder="Enter your complete name"
-                :class="{
-                    'error-validation': completeName.length < 3 && completeName.length > 0,
-                    'success-validation': completeName.length >= 3
-                }"
-            />    
-            <button :disabled="completeName.length < 3" @click="sayHello">Register</button>
-            <p v-if="completeName.length < 3 && completeName.length > 0" style="color: red;">Please enter at least 3 characters</p>
-        </div>
-    </div>
+  <v-container>
+    <!-- Centers horizontally the three components-->
+    <v-row justify="center">
+        <!-- Responsive design -->
+      <v-col cols="12" sm="8" md="6">
+        <!-- Card that contains the form to register the client-->
+        <v-card>
+          <v-card-title>Register Client</v-card-title>
+          <v-card-text>
+            <v-text-field
+              v-model="completeName"
+              label="Complete name"
+              :error="completeName.length < 3 && completeName.length > 0"
+              :success="completeName.length >= 3"
+              placeholder="Enter your complete name"
+              clearable
+            />
+            <v-btn :disabled="completeName.length < 3" color="primary" @click="sayHello">
+              Register
+            </v-btn>
+            <v-alert v-if="completeName.length < 3 && completeName.length > 0" type="error" class="mt-2">
+              Please enter at least 3 characters
+            </v-alert>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup lang="ts">

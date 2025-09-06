@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <v-container>
     <ProductListSearch :products="products" @add-to-cart="handleAddToCart" />
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">

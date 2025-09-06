@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <v-container>
     <h2>Clients</h2>
     <RegisterClient />
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">

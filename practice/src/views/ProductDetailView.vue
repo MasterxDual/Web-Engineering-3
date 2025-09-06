@@ -1,17 +1,23 @@
 <template>
-  <div v-if="product">
-    <h2>{{ product.name }}</h2>
-    <p>Price: ${{ product.price }}</p>
-    <p v-if="product.stock > 0">Actual stock: {{ product.stock }}</p>
-    <p v-else style="color:red;">Out of stock</p>
-
-    <button @click="goBack">Back to products</button>
-  </div>
-  <div v-else>
-    <p style="color:red;">Product not found</p>
-    <button @click="goBack">Back</button>
-  </div>
+  <v-container>
+    <v-card v-if="product">
+      <v-card-title class="product-name">{{ product.name }}</v-card-title>
+      <v-card-text>
+        <div>Price: ${{ product.price }}</div>
+        <div v-if="product.stock > 0">Actual stock: {{ product.stock }}</div>
+        <v-chip v-else color="red" dark>Out of stock</v-chip>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="goBack" color="primary">Back to products</v-btn>
+      </v-card-actions>
+    </v-card>
+    <v-alert v-else type="error" text>
+      Product not found
+      <v-btn @click="goBack" color="primary">Back</v-btn>
+    </v-alert>
+  </v-container>
 </template>
+
 
 <script setup lang="ts">
     import { inject } from 'vue';
@@ -35,3 +41,11 @@
       router.push("/products");
     }
 </script>
+
+<style scoped>
+  .product-name {
+        text-decoration: none;
+        color: #1976d2;
+        font-weight: 900;
+    }
+</style>

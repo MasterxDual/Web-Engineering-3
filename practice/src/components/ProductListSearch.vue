@@ -1,33 +1,67 @@
-<template>
-    <div class="container">
+<template>    
+    <!-- Principal container with automatic margins -->
+    <v-container>
+        <!-- Grid system: row -->
+    <v-row>
+        <!-- Columns that occupies 12 columns (full width) -->
+      <v-col cols="12">
         <h2>Product List</h2>
-
-        <!-- Input search -->
-        <input type="text" v-model="searchQuery" placeholder="Search products..." class="search-input"/>
-        
-        <!-- Empty state if not products found -->
-        <p v-if="filteredProducts.length === 0" class="empty-state">No products found.</p>
-        
-        <!-- Product List -->
-        <div class="product-list">
-            <!-- v-for makes the list searched by input search, otherwise makes the complete local list -->
-            <div
-                v-for="product in filteredProducts" 
-                :key="product.id"
-                class="product-card"
-                :class="{ 'out-of-stock': product.stock === 0 }">
-                <!-- This allows to navigate to the product detail page when clicked on the name of the product shown in the product list -->
-                <h3><RouterLink :to="`/products/${product.id}`" class="product-name">{{ product.name }}</RouterLink></h3>
-                <p>Price: ${{ product.price }}</p>
-                <p>
-                    Stock:
-                    <span v-if="product.stock > 0">{{ product.stock }}</span>
-                    <span class="out-of-stock-span" v-else>Out of Stock</span>
-                </p>
-                <button :disabled="product.stock === 0" @click="addToCart(product.id)">Add to cart</button>
+        <!-- Search input field -->
+        <!-- label: placeholder
+        clearable: allows deleting text
+        mb-4: inferior margin -->
+        <v-text-field
+          v-model="searchQuery"
+          label="Search products..." 
+          clearable 
+          class="mb-4"
+        />
+      </v-col>
+    </v-row>
+    <v-row v-if="filteredProducts.length === 0">
+      <v-col cols="12">
+        <!-- Message that appears if there's not any product found -->
+        <v-alert type="info" text>No products found.</v-alert>
+      </v-col>
+    </v-row>
+    <v-row>
+        <!-- 1 columns: cols for movil, 2 columns: sm for tablets, 3 columns: md for desktops -->
+      <v-col
+        v-for="product in filteredProducts"
+        :key="product.id"
+        cols="12"
+        sm="6"
+        md="4"
+      >
+      <!-- It gets darker if there's not stock -->
+        <v-card :class="{ 'opacity-50': product.stock === 0 }" class="mb-4">
+          <v-card-title>
+            <!-- Link to the detail of the product -->
+            <RouterLink :to="`/products/${product.id}`" class="product-name">{{ product.name }}</RouterLink>
+          </v-card-title>
+          <v-card-text>
+            <div>Price: ${{ product.price }}</div>
+            <div>
+              Stock:
+              <span v-if="product.stock > 0">{{ product.stock }}</span>
+              <!-- Red chip if there's no stock -->
+              <v-chip v-else color="red" dark>Out of Stock</v-chip>
             </div>
-        </div>
-    </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              :disabled="product.stock === 0"
+              color="primary"
+              @click="addToCart(product.id)"
+            >
+              Add to cart
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+    
 </template>
 
 <script setup lang="ts">
@@ -59,98 +93,19 @@
 </script>
 
 <style scoped>
-    .container {
-        max-width: 1200px;
-        width: 100%;
-        margin: auto;
-        padding: 1rem;
-        /* We make search-input in the top and product-list to the bottom */
-        display: flex;
-        flex-direction: column;
-    }
-    .search-input {
-        width: 100%;
-        padding: 0.6rem;
-        margin-bottom: 1rem;
-        margin-top: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-    }
-    .empty-state {
-        color: #888;
-        font-style: italic;
-        margin-top: 1rem;
-    }
-    .product-list {
-        /* We make the product list responsive and situated in rows */
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        padding-top: 0;
-    }
-
-    .product-card {
-        background: #f9f9f9;
-        border-radius: 12px;
-        padding: 1rem;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s;
-        flex: 1 1 180px; /* Flex-grow, flex-shrink, flex-basis */
-    }
-
-    .product-card:hover {
-        transform: scale(1.02);
-    }
-
     .product-name {
         text-decoration: none;
-        color: #007bff;
+        color: #1976d2;
         font-weight: 900;
     }
 
-    button {
-        margin-top: 0.5rem;
-        padding: 0.6rem 1 rem;
-        background: #007bff;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
+    button:hover {
+        background: #0056b3;
     }
+
     button:disabled {
         background: #aaa;
         cursor: not-allowed;
     }
-
-    /* If the class is added if product is out of stock then turns opacity to 0.6 to all product-cards*/
-    .out-of-stock {
-        opacity: 0.6;
-    }
-
-    /* We draw a rectangule inside Out of Stock text */
-    .out-of-stock-span {
-        color: white;
-        font-weight: bold;
-        background-color: red;
-        padding: 0.2rem 0.4rem;
-        border-radius: 4px;
-        font-weight: bold;
-    }
-
-    @media (max-width: 480px) {
-        .search-input {
-            font-size: 14px;
-            padding: 0.5rem;
-        }
-        .product-card {
-            padding: 0.8rem;
-        }
-    
-        button {
-            font-size: 14px;
-            padding: 0.5rem;
-        }
-    }
-
 
 </style>

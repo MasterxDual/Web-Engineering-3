@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <v-container>
     <h2>Shopping Cart</h2>
     <ShoppingCart :products="products" @update-stock="handleUpdateStock" />
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
