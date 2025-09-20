@@ -50,7 +50,7 @@
 <script setup lang="ts">
     import type { Product } from '@/types/Product';
     import type { Ref } from 'vue';
-    import { inject } from 'vue';
+    import { inject, onMounted, onUnmounted } from 'vue';
     import { useCart } from '@/composables/useCart';
     import { addToCart, increaseCartItem, decreaseCartItem } from '@/services/cartService';
 
@@ -100,6 +100,16 @@
       decreaseCartItem(cart.value, productId);
       emit('update-stock', { productId, diff: +1 });
     }
+
+    /* This happens when the component ShoppingCart appears on the DOM */
+    onMounted(() => {
+      console.log('ShoppingCart mounted!');
+    });
+
+    /* This happens when the component ShoppingCart disappears from the DOM */
+    onUnmounted(() => {
+      console.log('ShoppingCart unmounted!');
+    });
 
     // Allows the parent component to access and use the addItem function
     defineExpose({ addItem })
