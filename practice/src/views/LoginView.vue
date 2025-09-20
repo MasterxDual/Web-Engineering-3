@@ -7,6 +7,7 @@
           <v-text-field
             v-model="email"
             label="Email"
+            @input="clearError"
             aria-label="Email"
             type="email"
             :rules="emailRules"
@@ -20,6 +21,7 @@
           <v-text-field
             v-model="password"
             label="Contraseña"
+            @input="clearError"
             aria-label="Contraseña"
             type="password"
             :rules="passwordRules"
@@ -140,6 +142,14 @@
     } finally {
       loading.value = false;
     }
+  }
+
+  /**
+   * Clears the error message when the user starts typing
+   * in either the email or password fields
+   */
+  function clearError() {
+    errorMsg.value = '';
   }
 </script>
 
