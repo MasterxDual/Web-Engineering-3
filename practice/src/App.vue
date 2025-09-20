@@ -7,6 +7,13 @@
       <v-toolbar-title>FastClient Store</v-toolbar-title>
       <!-- Flexible space to push elements to the right -->
       <v-spacer />
+      <!-- User information display if it's logged in the website -->
+      <template v-if="user">
+        <v-chip class="mr-2" color="grey-darken-5" text-color="white" label>
+          {{ user.email }}
+        </v-chip>
+        <v-btn class="button" color="secondary" @click="onLogout">Salir</v-btn>
+      </template>
       <!-- Tab navigation -->
       <v-tabs v-model="tab" background-color="primary" dark>
         <v-tab to="/">Home</v-tab>
@@ -30,6 +37,7 @@
   import { ref, provide } from 'vue';
   import type { Ref } from 'vue';
   import type { Product } from './types/Product';
+  import { useAuth } from './composables/useAuth';
 
   /* The tab variable is a reactive reference that:
     Controls the active tab in navigation (v-tabs)
@@ -55,8 +63,21 @@
 
   provide<Ref<Product[]>>('products', products);
   provide<Ref<{ id: number; quantity: number }[]>>('cart', cart);
+
+  const { user, doLogout } = useAuth();
+
+  /**
+   * Handles user logout by invoking the logout function from useAuth
+   * and redirecting to the login page.
+   */ 
+  function onLogout() {
+    doLogout();
+    window.location.href = '/login';
+  }
 </script>
 
 <style scoped>
-  
+  .button {
+    color: white;
+  }
 </style>
