@@ -48,12 +48,13 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, inject } from 'vue';
     import type { Product } from '@/types/Product';
     import type { Ref } from 'vue';
+    import { inject } from 'vue';
+    import { useCart } from '@/composables/useCart';
+    import { addToCart, increaseCartItem, decreaseCartItem } from '@/services/cartService';
 
     // Inject products from parent component (App.vue) instead of using props
-    // const products = inject<Ref<Product[]>>('products')!;
     const products = inject("products") as Ref<Product[]>;
 
     // We receive the global cart to update it when a product is added
@@ -65,26 +66,7 @@
         (e: 'update-stock', payload: { productId: number; diff: number }): void
     }>();
 
-    /** computed property to automatically calculate every time cart.value or props.products changes
-     * ...product copies all the properties of the product found in props.products
-     * For every entry of the cart, searches the complete product in the list props.products
-     * cartItems.value is the array of products with quantity, subtotal, name, id and price
-     *  */ 
-    const cartItems = computed(() =>
-      cart.value.map(entry => {
-        const product = products.value.find(p => p.id === entry.id)!;
-        return {
-          ...product,
-          quantity: entry.quantity,
-          subtotal: entry.quantity * product.price
-        };
-      })
-    );
-
-    // Calculates the total price of the cart using reduce method (initial value is 0) and iterates through cartItems until finished
-    const totalPrice = computed(() =>
-      cartItems.value.reduce((sum, item) => sum + item.subtotal, 0)
-    );
+    const { cartItems, totalPrice } = useCart(cart.value, products.value);
 
     /**
      * Function to add one unit of a product to the cart or increase its quantity if it already exists
@@ -92,28 +74,20 @@
      * @param productId - ID of the product to add 
      * */ 
     function addItem(productId: number) {
-        const item = cart.value.find(i => i.id === productId);
-        if (item) {
-            item.quantity++;
-        } else {
-            cart.value.push({ id: productId, quantity: 1 });
-        }
+     addToCart(cart.value, productId);
     }
 
     /**
      * Function to increase one unit of a product in the cart clicking the '+' button
      * This function is used in this component (Cart.vue) in the template
      * @param productId - ID of the product to increase
-     *  */ 
+     *  */
     function increase(productId: number) {
-      const cartItem = cart.value.find(i => i.id === productId);
-      const product = products.value.find(p => p.id === productId);
-
-      if (cartItem && product && product.stock > 0) {
-        cartItem.quantity++;
+      const ok = increaseCartItem(cart.value, products.value, productId);
+      if(ok) {
         emit('update-stock', { productId, diff: -1 });
-      } else if (product && product.stock <= 0) {
-          alert("There's no more stock available for this product.")
+      } else {
+        alert("There's no more stock available for this product.")
       }
     }
 
@@ -123,17 +97,8 @@
      * @param item - CartItem interface of the product to decrease
      *  */
     function decrease(productId: number) {
-      const cartItem = cart.value.find(i => i.id === productId);
-      const product = products.value.find(p => p.id === productId);
-
-      if (cartItem && product) {
-        cartItem.quantity--;
-        emit('update-stock', { productId, diff: +1 });
-
-        if (cartItem.quantity <= 0) {
-          cart.value = cart.value.filter(i => i.id !== productId);
-        }
-      } 
+      decreaseCartItem(cart.value, productId);
+      emit('update-stock', { productId, diff: +1 });
     }
 
     // Allows the parent component to access and use the addItem function

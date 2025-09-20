@@ -18,6 +18,7 @@ la variable sin el value y también en el archivo script usando el value -->
               :error="completeName.length < 3 && completeName.length > 0"
               :success="completeName.length >= 3"
               placeholder="Enter your complete name"
+              @click:clear="completeName = ''"
               clearable
             />
             <v-btn :disabled="completeName.length < 3" color="primary" @click="sayHello">

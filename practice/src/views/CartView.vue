@@ -10,6 +10,7 @@
     import { inject } from 'vue';
     import type { Ref } from 'vue';
     import type { Product } from '@/types/Product';
+    import { decreaseStock, increaseStock } from '@/services/productService';
 
     const products = inject("products") as Ref<Product[]>;
 
@@ -18,9 +19,12 @@
     * @param payload - Object containing productId and the difference in stock (positive or negative)
     *  */
     function handleUpdateStock(payload: { productId: number; diff: number }) {
-      const product = products.value.find((p: Product) => p.id === payload.productId);
-      if (product) {
-        product.stock += payload.diff;
+      if (payload.diff > 0) {
+        // Si diff es positivo, aumentar el stock
+        increaseStock(products.value, payload.productId);
+      } else if (payload.diff < 0) {
+        // Si diff es negativo, disminuir el stock
+        decreaseStock(products.value, payload.productId);
       }
     }
 </script>

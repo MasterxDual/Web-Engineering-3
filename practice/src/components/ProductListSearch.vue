@@ -14,6 +14,7 @@
           v-model="searchQuery"
           label="Search products..." 
           clearable 
+          @click:clear="searchQuery = ''"
           class="mb-4"
         />
       </v-col>
@@ -21,7 +22,7 @@
     <v-row v-if="filteredProducts.length === 0">
       <v-col cols="12">
         <!-- Message that appears if there's not any product found -->
-        <v-alert type="info" text>No products found.</v-alert>
+        <v-alert type="info">No products found.</v-alert>
       </v-col>
     </v-row>
     <v-row>
@@ -65,8 +66,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, computed } from 'vue';
-    const searchQuery = ref('');
+    import { useProductSearch } from '@/composables/useProductSearch';
 
     // We define the emit event to notify parent component when a product is added to cart
     const emit = defineEmits<{
@@ -77,11 +77,7 @@
         products: { id: number; name: string; price: number; stock: number }[];
     }>();
 
-    // Computed property to filter products based on search query (case-insensitive)
-    // Computed works with reactive variables and updates automatically when they change
-    const filteredProducts = computed(() => 
-        productProps.products.filter((p) => p.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
-    );
+    const { searchQuery, filteredProducts } = useProductSearch(productProps.products)
 
     /** Function that emits the event to parent component when a product is added to cart
      * 

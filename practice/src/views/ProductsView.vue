@@ -9,11 +9,10 @@
     import ProductListSearch from '@/components/ProductListSearch.vue';
     import type { Ref } from 'vue';
     import type { Product } from '@/types/Product';
+    import { decreaseStock } from '@/services/productService';
 
     // We receive the global products list from the parent component (App.vue)
     const products = inject("products") as Ref<Product[]>;
-
-    
 
     // We receive the global cart to update it when a product is added
     const cart = inject<Ref<{ id: number; quantity: number }[]>>('cart')!;
@@ -30,21 +29,9 @@
 
       if(cartItem) cartItem.quantity++;
       else cart.value.push({ id: productId, quantity: 1 });
-
-      // We also decrease the stock in the products list
-      const product = products.value.find(p => p.id === productId);
-    
-      if(product && product.stock > 0) {
-        product.stock--;
-      } else {
-        alert('Product is out of stock!');
-      }
+      
+      decreaseStock(products.value, productId);
 
     }
-    
-    // función para agregar al carrito (por ahora navegamos al carrito como demo)
-    /* function handleAddToCart(productId: number) {
-      alert("Producto agregado con id " + productId);
-      router.push("/cart"); // navegación programática
-    } */
+
 </script>

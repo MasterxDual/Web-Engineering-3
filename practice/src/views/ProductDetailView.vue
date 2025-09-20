@@ -11,7 +11,7 @@
         <v-btn @click="goBack" color="primary">Back to products</v-btn>
       </v-card-actions>
     </v-card>
-    <v-alert v-else type="error" text>
+    <v-alert v-else type="error">
       Product not found
       <v-btn @click="goBack" color="primary">Back</v-btn>
     </v-alert>
